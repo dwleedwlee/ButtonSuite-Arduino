@@ -31,7 +31,7 @@ extern "C" {
 #include <stdbool.h>
 #include <stdint.h>
 
-#define DIO_HIGH_ACTIVE
+#define DIO_LOW_ACTIVE
 
 typedef enum {
   HAL_DIO_PIN_BOUNCE_APP = 0,
