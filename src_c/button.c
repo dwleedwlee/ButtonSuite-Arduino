@@ -41,12 +41,20 @@ void ButtonBase_setDebounceInterval(buttonBase_t *pThis, uint16_t debounceInterv
 }
 
 buttonBfStatus_t ButtonBase_Update(buttonBase_t *pThis) {
+  // Have the debouncer update.  This does most of the work of handling the button state.
+  // The debouncer determines the current state, if the state changed since the last time
+  // "update" was called, what the time between state changes was, and so on.
   BOUNCE_update(&(pThis->debouncer));
   
+  // Catch transitions from HIGH to LOW.  This 
   if(BOUNCE_fell(&(pThis->debouncer))) {
     return JUSTPRESSED;
   }
-  
+
+  // Look to see if the button is currently pressed.
+  // The "Bounce.read()" function returns true if the pin is reading high.  In
+  // our case, the button is pressed if the pin is low.  So the button is pressed
+  // if "read" returns false.  
   if(!BOUNCE_read(&(pThis->debouncer))) {
     if(BOUNCE_currentDuration(&(pThis->debouncer)) < pThis->longPressInterval) {
       return ISSHORTPRESSED;
@@ -54,7 +62,10 @@ buttonBfStatus_t ButtonBase_Update(buttonBase_t *pThis) {
       return ISLONGPRESSED;
     }
   }
-  
+
+  // Catch transitions from LOW to HIGH.  This is the button release.  If the
+  // button is released, we then check to see if the press duration makes is a
+  // short or long press.  
   if(BOUNCE_rose(&(pThis->debouncer))) {
     if(BOUNCE_previousDuration(&(pThis->debouncer)) < pThis->longPressInterval) {
       return WASSHORTPRESSED;
@@ -63,5 +74,7 @@ buttonBfStatus_t ButtonBase_Update(buttonBase_t *pThis) {
     }
   }
   
+  // Button is still in unpushed state and did not just get released.  In
+  // this case, the button is considered idle (nothing happened).
   return NOTPRESSED;
 }

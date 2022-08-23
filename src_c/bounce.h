@@ -33,10 +33,16 @@ extern "C" {
 
 #include "hal_dio.h"
 
+// Uncomment the following line for "LOCK-OUT" debounce method
+//#define BOUNCE_LOCK_OUT
+
+// Uncomment the following line for "BOUNCE_WITH_PROMPT_DETECTION" debounce method
+//#define BOUNCE_WITH_PROMPT_DETECTION
+
 typedef enum {
-  DEBOUNCED_STATE = 0x01,
-  UNSTABLE_STATE = 0x02,
-  CHANGED_STATE = 0x04,
+  DEBOUNCED_STATE = 0x01,	// Final returned calculated debounced state
+  UNSTABLE_STATE = 0x02,	// Actual last state value behind the scene
+  CHANGED_STATE = 0x04,		// The DEBOUNCED_STATE has changed since last update()
 }bounceBfState_t;
 
 typedef struct {
@@ -50,14 +56,48 @@ typedef struct {
 }debouncer_t;
 
 debouncer_t *BOUNCE_Init(debouncer_t *pThis, const _HalDio_t *pHal);
+/**
+@brief  Sets the debounce interval in milliseconds.		
+@param    interval_millis
+		The interval time in milliseconds. 
+ */
 void BOUNCE_interval(debouncer_t *pThis, uint16_t intervalMillis);
 void BOUNCE_begin(debouncer_t *pThis);
+/*!
+@brief   Updates the pin's state. 
+Because Bounce does not use interrupts, you have to "update" the object before reading its value and it has to be done as often as possible (that means to include it in your loop()). Only call update() once per loop().
+@return True if the pin changed state.
+*/
 bool BOUNCE_update(debouncer_t *pThis);
+/**
+ @brief Returns the pin's state (HIGH or LOW).
+ @return HIGH or LOW.
+ */
 bool BOUNCE_read(debouncer_t *pThis);
+/**
+@brief Returns true if pin signal transitions from high to low.
+*/
 bool BOUNCE_fell(debouncer_t *pThis);
+/**
+@brief Returns true if pin signal transitions from low to high.
+*/
 bool BOUNCE_rose(debouncer_t *pThis);
+/**
+ @brief Returns true if the state changed on last update.
+ @return True if the state changed on last update. Otherwise, returns false.
+*/
 bool BOUNCE_changed(debouncer_t *pThis);
+/**
+@brief Returns the duration in milliseconds of the current state. 
+Is reset to 0 once the pin rises ( rose() ) or falls ( fell() ).
+@return The duration in milliseconds (unsigned long) of the current state.
+*/
 uint32_t BOUNCE_currentDuration(debouncer_t *pThis);
+/**
+ @brief Returns the duration in milliseconds of the previous state.
+ Takes the values of duration() once the pin changes state.
+ @return The duration in milliseconds (unsigned long) of the previous state. 
+ */
 uint32_t BOUNCE_previousDuration(debouncer_t *pThis);
 
 #ifdef __cplusplus
