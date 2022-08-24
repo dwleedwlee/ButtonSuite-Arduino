@@ -45,8 +45,8 @@ typedef struct _HalDio {
 }_HalDio_t;
 
 uint32_t HAL_Ticks(void);
-void HalDio_Init(const _HalDio_t *hal, halDioPin_t idx);
-const _HalDio_t *HalDio_GetStaticFromIndex(halDioPin_t idx);
+const _HalDio_t *const HalDio_Init(halDioPin_t idx);
+const _HalDio_t *const HalDio_GetStaticFromIndex(halDioPin_t idx);
 bool HalDio_DigitalRead(const _HalDio_t *hal);
 
 #ifdef __cplusplus

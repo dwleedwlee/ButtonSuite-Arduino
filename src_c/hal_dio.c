@@ -37,11 +37,13 @@ uint32_t HAL_Ticks(void) {
   return millis();
 }
 
-void HalDio_Init(const _HalDio_t *hal, halDioPin_t idx) {
-  hal = &(tableHalDio[idx]);
+const _HalDio_t *const HalDio_Init(halDioPin_t idx) {
+  const _HalDio_t *hal = &(tableHalDio[idx]);
+  pinMode(hal->pin, INPUT_PULLUP);
+  return hal;
 }
 
-const _HalDio_t *HalDio_GetStaticFromIndex(halDioPin_t idx) {
+const _HalDio_t *const HalDio_GetStaticFromIndex(halDioPin_t idx) {
   return &(tableHalDio[idx]);
 }
 

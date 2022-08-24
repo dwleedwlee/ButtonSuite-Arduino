@@ -10,7 +10,7 @@ auto led = JLed(9).Breathe(2000).Repeat(5).DelayAfter(2000);
 void setup() {
   Serial.begin(9600);
   Serial.println("Button Test Program");
-  ButtonBase_Init(ButtonBase_GetStaticButtonFromIndex(BUTTON_RES_ALPHA), HalDio_GetStaticFromIndex(HAL_DIO_PIN_BOUNCE_APP), 50, 2000);
+  ButtonBase_Init(ButtonBase_GetStaticButtonFromIndex(BUTTON_RES_ALPHA), HalDio_Init(HAL_DIO_PIN_BOUNCE_APP), 50, 2000);
   ButtonAnalyzer_Init(ButtonAnalyzer_GetStaticFromIndex(BUTTON_ANALYZER_APP), ButtonBase_GetStaticButtonFromIndex(BUTTON_RES_ALPHA), 3);
 }
 

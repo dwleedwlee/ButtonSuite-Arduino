@@ -56,7 +56,7 @@ debouncer_t *BOUNCE_Init(debouncer_t *pThis, const _HalDio_t *pHal) {
   pThis->previousMillis = 0;
   pThis->intervalMillis = 5;
 #ifdef DIO_LOW_ACTIVE
-  pThis->state = DEBOUNCED_STATE | UNSTABLE_STATE;
+  pThis->state = (DEBOUNCED_STATE | UNSTABLE_STATE);
 #else
   pThis->state = 0;
 #endif
